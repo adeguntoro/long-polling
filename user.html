@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>User 2</title>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="longpoll.js" type="text/javascript"></script>
+	<script>
+		var sendMessage = function(){
+			text = $('#chat').val();
+			if(text !== "undefined" && text.length>0){
+				$.ajax({
+					url: "http://localhost/longpoll/sendMessage.php",
+					data: {"user": "2", "text": text},
+					type: "POST",
+					success: function(response){
+						console.log(response);
+					},
+					error: function(response){
+						console.log(response);
+					}
+				});
+			}
+		}
+	</script>
+</head>
+<body>
+
+	<span>Type new message and click send</span>
+	<input type="text" id="chat"/><button onclick="sendMessage();">Send</button>
+
+	
+	<h1>Long polling example, User 2</h1>
+	<ul id='x'>
+	</ul>
+
+	<script>
+		var requestUrl = "http://localhost/longpoll/serv.php";
+		
+		/*	set user to 2 here	*/
+		var data = { "user": "2" };
+
+		var callBack = function(response){
+			response = JSON.parse(response);			
+			if(response.success == 0){
+				for(var i=0 ; i<response.feed.length ; i++)
+					$('#x').append("<li>" + response.feed[i].text + "</li>");
+			}
+		}
+
+		longpoll(requestUrl, data, callBack);
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>User 1</title>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="longpoll.js" type="text/javascript"></script>
+	<script>
+		var sendMessage = function(){
+			text = $('#chat').val();
+			if(text !== "undefined" && text.length>0){
+				$.ajax({
+					url: "http://localhost/longpoll/sendMessage.php",
+					data: {"user": "1", "text": text},
+					type: "POST",
+					success: function(response){
+						console.log(response);
+					},
+					error: function(response){
+						console.log(response);
+					}
+				});
+			}
+		}
+	</script>
+</head>
+<body>
+
+	<span>Type new message and click send</span>
+	<input type="text" id="chat"/><button onclick="sendMessage();">Send</button>
+
+	
+	<h1>Long polling example, User 1</h1>
+	<ul id='x'>
+	</ul>
+
+	<script>
+		/*	Long Poll Use	*/
+		
+		//url to where request has to be sent
+		var requestUrl = "http://localhost/longpoll/serv.php";
+		
+		//data to be sent, ... in this case I have sent JSON object with user's id currently requesting data
+		var data = { "user": "1" };
+		
+		//callBack function to handle response
+		var callBack = function(response){
+			console.log("call back: "+response);
+			
+			response = JSON.parse(response);
+			
+			if(response.success == 0){
+				for(var i=0 ; i<response.feed.length ; i++)
+					$('#x').append("<li>" + response.feed[i].text + "</li>");
+			}
+		}
+		
+		//start longpoll request
+		longpoll(requestUrl, data, callBack);
+		//Alternate call
+		//longpoll(requestUrl, data, callBack, "GET", 2000);
+	</script>
+
+</body>
+</html>
